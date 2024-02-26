@@ -1,4 +1,4 @@
-import { listContacts, getContactById, removeContact, addContact } from "../services/contactsServices.js";
+import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
@@ -45,14 +45,13 @@ export const createContact = async (req, res, next) => {
   }
 };
 
-export const updateContact = async (req, res, next) => {
+export const updateContactController = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await getContactById(Number(id));
-    if (!contact) {
+    const updatedContact = await updateContact(Number(id), req.body);
+    if (!updatedContact) {
       return res.status(404).json({ message: "Not found" });
     }
-    const updatedContact = await contactsService.updateContact(Number(id), req.body);
     res.json(updatedContact);
   } catch (err) {
     next(err);
