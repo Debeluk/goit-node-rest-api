@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { nanoid } from "nanoid";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,7 +33,7 @@ async function removeContact(contactId) {
 async function addContact(name, email, phone) {
   const contacts = await listContacts();
   const newContact = {
-    id: contacts.length + 1,
+    id: nanoid(),
     name,
     email,
     phone,
@@ -43,15 +44,14 @@ async function addContact(name, email, phone) {
 }
 
 async function updateContact(contactId, updateInfo) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-    if (index !== -1) {
-      contacts[index] = { ...contacts[index], ...updateInfo };
-      await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-      return contacts[index];
-    }
-    return null;
+  const contacts = await listContacts();
+  const index = contacts.findIndex((contact) => contact.id === contactId);
+  if (index !== -1) {
+    contacts[index] = { ...contacts[index], ...updateInfo };
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    return contacts[index];
   }
-  
+  return null;
+}
 
-export { listContacts, getContactById, removeContact, addContact, updateContact};
+export { listContacts, getContactById, removeContact, addContact, updateContact };

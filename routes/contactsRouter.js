@@ -1,4 +1,5 @@
 import express from "express";
+import validateBody from "../middleware/validateBody.js";
 import {
   getAllContacts,
   getOneContact,
@@ -6,6 +7,7 @@ import {
   createContact,
   updateContactController,
 } from "../controllers/contactsControllers.js";
+import { updateContact } from "../services/contactsServices.js";
 
 const contactsRouter = express.Router();
 
@@ -15,8 +17,8 @@ contactsRouter.get("/:id", getOneContact);
 
 contactsRouter.delete("/:id", deleteContact);
 
-contactsRouter.post("/", createContact);
+contactsRouter.post('/', validateBody(createContact), createContact);
 
-contactsRouter.put("/:id", updateContactController);
+contactsRouter.put('/:contactId', validateBody(updateContactController), updateContactController);
 
 export default contactsRouter;
