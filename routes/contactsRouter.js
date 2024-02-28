@@ -20,6 +20,6 @@ contactsRouter.delete("/:id", deleteContact);
 
 contactsRouter.post('/', validateBody(createContactSchema), createContact);
 
-contactsRouter.put('/:contactId', validateBody(updateContactSchema), updateContactController);
+contactsRouter.put('/:id', validateBody(updateContactSchema), updateContactController);
 
 export default contactsRouter;

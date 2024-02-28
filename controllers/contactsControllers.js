@@ -12,7 +12,7 @@ export const getAllContacts = async (req, res, next) => {
 export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await getContactById(Number(id));
+    const contact = await getContactById(id);
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
     }
@@ -25,7 +25,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await removeContact(Number(id));
+    const contact = await removeContact(id);
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
     }
@@ -48,7 +48,7 @@ export const createContact = async (req, res, next) => {
 export const updateContactController = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updatedContact = await updateContact(Number(id), req.body);
+    const updatedContact = await updateContact(id, req.body);
     if (!updatedContact) {
       return res.status(404).json({ message: "Not found" });
     }
