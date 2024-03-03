@@ -1,4 +1,11 @@
-import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
+import {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContact,
+  updateStatusContact
+} from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
@@ -27,9 +34,9 @@ export const deleteContact = async (req, res, next) => {
     const { id } = req.params;
     const contact = await removeContact(id);
     if (!contact) {
-      return res.status(404).json({ message: "Not found" });
+      return res.status(404).json({ message: "Contact not found" });
     }
-    res.json(contact);
+    res.status(200).json({ message: "Contact deleted successfully" });
   } catch (err) {
     next(err);
   }
@@ -53,6 +60,19 @@ export const updateContactController = async (req, res, next) => {
       return res.status(404).json({ message: "Not found" });
     }
     res.json(updatedContact);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateContactFavorite = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const updatedContact = await updateStatusContact(contactId, req.body);
+    if (!updatedContact) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    res.status(200).json(updatedContact);
   } catch (err) {
     next(err);
   }
