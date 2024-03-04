@@ -1,7 +1,6 @@
 import express from "express";
 import validateBody from "../middleware/validateBody.js";
-import { updateContactSchema } from "../schemas/contactsSchemas.js";
-import { createContactSchema } from "../schemas/contactsSchemas.js";
+import Contact from "../schemas/contactsSchemas.js";
 import {
   getAllContacts,
   getOneContact,
@@ -19,9 +18,9 @@ contactsRouter.get("/:id", getOneContact);
 
 contactsRouter.delete("/:id", deleteContact);
 
-contactsRouter.post('/', validateBody(createContactSchema), createContact);
+contactsRouter.post('/', validateBody(Contact), createContact);
 
-contactsRouter.put('/:id', validateBody(updateContactSchema), updateContactController);
+contactsRouter.put('/:id', validateBody(Contact), updateContactController);
 
 contactsRouter.patch('/:contactId/favorite', updateContactFavorite);
 

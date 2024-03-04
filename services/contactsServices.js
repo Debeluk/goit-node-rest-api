@@ -1,4 +1,4 @@
-import Contact from "../schemas/contactsSchemas";
+import Contact from "../schemas/contactsSchemas.js";
 
 async function listContacts() {
   return Contact.find();
