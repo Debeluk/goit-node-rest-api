@@ -1,5 +1,6 @@
 import { connect } from 'mongoose';
-const uri = "mongodb+srv://admin:admin@cluster0.xikqfmd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+import 'dotenv/config';
+const uri = process.env.MONGODB_URI;
 
 const connectDB = async () => {
   try {
