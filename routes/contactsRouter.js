@@ -1,7 +1,7 @@
 import express from "express";
 import validateBody from "../middleware/validateBody.js";
-import Contact from "../schemas/contactsSchemas.js";
-import { createContactSchema, updateContactSchema } from "../validation/validationSchemas.js";
+import { createContactSchema } from "../schemas/validateSchemas.js";
+import { updateContactSchema } from "../schemas/validateSchemas.js";
 import {
   getAllContacts,
   getOneContact,
