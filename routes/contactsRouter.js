@@ -2,6 +2,7 @@ import express from "express";
 import validateBody from "../middleware/validateBody.js";
 import { createContactSchema } from "../schemas/validateSchemas.js";
 import { updateContactSchema } from "../schemas/validateSchemas.js";
+import { updateFavoriteSchema } from "../schemas/validateSchemas.js";
 import {
   getAllContacts,
   getOneContact,
@@ -23,6 +24,6 @@ contactsRouter.post('/', validateBody(createContactSchema), createContact);
 
 contactsRouter.put('/:id', validateBody(updateContactSchema), updateContactController);
 
-contactsRouter.patch('/:contactId/favorite', updateContactFavorite);
+contactsRouter.patch('/:contactId/favorite', validateBody(updateFavoriteSchema), updateContactFavorite);
 
 export default contactsRouter;
