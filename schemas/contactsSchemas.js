@@ -1,19 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
 const contactSchema = new Schema({
   name: {
     type: String,
-    required: [true, 'Set name for contact'],
+    required: [true, "Set name for contact"],
   },
   email: {
     type: String,
-    required: [true, 'Set email for contact'],
+    required: [true, "Set email for contact"],
   },
   phone: {
     type: String,
-    required: [true, 'Set phone for contact'],
+    required: [true, "Set phone for contact"],
   },
   favorite: {
     type: Boolean,
@@ -21,11 +21,11 @@ const contactSchema = new Schema({
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
 });
 
-const Contact = mongoose.model('Contact', contactSchema);
+const Contact = mongoose.model("Contact", contactSchema);
 
 export default Contact;

@@ -12,11 +12,12 @@ async function removeContact(contactId) {
   return Contact.findByIdAndDelete(contactId);
 }
 
-async function addContact(name, email, phone) {
+async function addContact({ name, email, phone, owner }) {
   const newContact = new Contact({
     name,
     email,
     phone,
+    owner,
   });
   return newContact.save();
 }
