@@ -9,7 +9,11 @@ import {
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await listContacts();
+    const ownerId = req.user._id;
+    if (!ownerId) {
+      console.error("No owner");
+    }
+    const contacts = await listContacts(ownerId);
     res.json(contacts);
   } catch (err) {
     next(err);
@@ -18,8 +22,12 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
+    const ownerId = req.user._id;
+    if (!ownerId) {
+      console.error("No owner");
+    }
     const { id } = req.params;
-    const contact = await getContactById(id);
+    const contact = await getContactById(id, ownerId);
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
     }
@@ -31,8 +39,12 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   try {
+    const ownerId = req.user._id;
+    if (!ownerId) {
+      console.error("No owner");
+    }
     const { id } = req.params;
-    const contact = await getContactById(id);
+    const contact = await getContactById(id, ownerId);
 
     if (!contact) {
       return res.status(404).json({ message: "Contact not found" });
@@ -54,6 +66,7 @@ export const createContact = async (req, res, next) => {
     const { name, email, phone } = req.body;
     const owner = req.user._id;
     const newContact = await addContact({ name, email, phone, owner });
+    console.log(newContact);
     res.status(201).json(newContact);
   } catch (err) {
     next(err);
@@ -62,8 +75,12 @@ export const createContact = async (req, res, next) => {
 
 export const updateContactController = async (req, res, next) => {
   try {
+    const ownerId = req.user._id;
+    if (!ownerId) {
+      console.error("No owner");
+    }
     const { id } = req.params;
-    const contact = await getContactById(id);
+    const contact = await getContactById(id, ownerId);
 
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
@@ -82,8 +99,12 @@ export const updateContactController = async (req, res, next) => {
 
 export const updateContactFavorite = async (req, res, next) => {
   try {
+    const ownerId = req.user._id;
+    if (!ownerId) {
+      console.error("No owner");
+    }
     const { id } = req.params;
-    const updatedContact = await updateStatusContact(id, req.body);
+    const updatedContact = await updateStatusContact(id, req.body, ownerId);
     if (!updatedContact) {
       return res.status(404).json({ message: "Not found" });
     }
