@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import gravatar from "gravatar";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -18,6 +19,12 @@ const userSchema = new mongoose.Schema({
   token: {
     type: String,
     default: null,
+  },
+  avatarURL: {
+    type: String,
+    default: function () {
+      return gravatar.url(this.email, { s: "250", r: "pg", d: "mm" }, true);
+    },
   },
 });
 

@@ -2,6 +2,10 @@ import bcrypt from "bcryptjs";
 import User from "../schemas/userSchema.js";
 import { authSchema } from "../schemas/validateSchemas.js";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import Jimp from "jimp";
+import path from "path";
+import fs from "fs/promises";
 
 export const register = async (req, res) => {
   try {
@@ -99,4 +103,41 @@ export const getCurrentUser = async (req, res) => {
     email: req.user.email,
     subscription: req.user.subscription,
   });
+};
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "tmp/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+export const upload = multer({ storage: storage });
+
+export const updateAvatar = async (req, res) => {
+  try {
+    const { path: tempPath, originalname } = req.file;
+    const { _id: userId } = req.user;
+
+    const avatar = await Jimp.read(tempPath);
+    await avatar.resize(250, 250);
+
+    const filePath = path.join(
+      __dirname,
+      "../public/avatars",
+      `${userId}${path.extname(originalname)}`
+    );
+    await avatar.writeAsync(filePath);
+
+    const avatarURL = `/avatars/${userId}${path.extname(originalname)}`;
+    await User.findByIdAndUpdate(userId, { avatarURL });
+
+    await fs.unlink(tempPath);
+
+    res.json({ avatarURL });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
