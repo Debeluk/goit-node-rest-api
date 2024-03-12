@@ -6,6 +6,10 @@ import multer from "multer";
 import Jimp from "jimp";
 import path from "path";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const register = async (req, res) => {
   try {
@@ -126,8 +130,8 @@ export const updateAvatar = async (req, res) => {
     await avatar.resize(250, 250);
 
     const filePath = path.join(
-      __dirname,
-      "../public/avatars",
+      path.dirname(__dirname),
+      "public/avatars",
       `${userId}${path.extname(originalname)}`
     );
     await avatar.writeAsync(filePath);
@@ -138,6 +142,38 @@ export const updateAvatar = async (req, res) => {
     await fs.unlink(tempPath);
 
     res.json({ avatarURL });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const deleteAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user || !user.avatarURL) {
+      return res.status(404).json({ message: "User or avatar not found" });
+    }
+
+    const avatarPath = path.join(
+      path.dirname(__dirname),
+      "public",
+      user.avatarURL
+    );
+
+    try {
+      await fs.access(avatarPath);
+      await fs.unlink(avatarPath);
+    } catch (error) {
+      console.log("Avatar file does not exist, skipping removal.");
+    }
+
+    user.avatarURL = "/avatars/default.jpg";
+    await user.save();
+
+    res.json({
+      message: "Avatar has been deleted successfully",
+      avatarURL: user.avatarURL,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
