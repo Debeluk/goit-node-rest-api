@@ -11,7 +11,7 @@ usersRouter.get('/current', authenticate, getCurrentUser);
 usersRouter.post('/register', register);
 usersRouter.post('/login', login);
 usersRouter.post('/logout', authenticate, logout);
-usersRouter.patch('/avatar', authenticate, upload.single('avatar'), updateAvatar);
-usersRouter.delete('/avatar', authenticate, deleteAvatar);
+usersRouter.patch('/avatars', authenticate, upload.single('avatar'), updateAvatar);
+usersRouter.delete('/avatars', authenticate, deleteAvatar);
 
 export default usersRouter;
