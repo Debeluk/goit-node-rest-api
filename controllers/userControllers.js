@@ -7,6 +7,7 @@ import Jimp from "jimp";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
+import { sendVerificationEmail } from "../middleware/emailService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +40,8 @@ export const register = async (req, res) => {
         subscription: user.subscription,
       },
     });
+    await sendVerificationEmail(email, user.verificationToken);
+    res.status(201).json({ message: "Please verify your email" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -77,6 +80,11 @@ export const login = async (req, res) => {
         subscription: user.subscription,
       },
     });
+    if (!user.verify) {
+      return res
+        .status(401)
+        .json({ message: "Please verify your email first" });
+    }
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -174,6 +182,54 @@ export const deleteAvatar = async (req, res) => {
       message: "Avatar has been deleted successfully",
       avatarURL: user.avatarURL,
     });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const verifyUser = async (req, res) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.verify = true;
+    user.verificationToken = null;
+    await user.save();
+
+    res.json({ message: "Verification successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "missing required field email" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.verify) {
+      return res
+        .status(400)
+        .json({ message: "Verification has already been passed" });
+    }
+
+    const verificationLink = `${process.env.BACKEND_URL}/users/verify/${user.verificationToken}`;
+    await sendVerificationEmail(email, verificationLink);
+
+    res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import gravatar from "gravatar";
+import { nanoid } from "nanoid";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -25,6 +26,15 @@ const userSchema = new mongoose.Schema({
     default: function () {
       return gravatar.url(this.email, { s: "250", r: "pg", d: "mm" }, true);
     },
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+    default: () => nanoid(),
   },
 });
 
