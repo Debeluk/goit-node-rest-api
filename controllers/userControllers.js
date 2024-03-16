@@ -61,6 +61,12 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Email or password is wrong" });
     }
 
+    if (!user.verify) {
+      return res
+        .status(401)
+        .json({ message: "Please verify your email first" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Email or password is wrong" });
@@ -80,11 +86,6 @@ export const login = async (req, res) => {
         subscription: user.subscription,
       },
     });
-    if (!user.verify) {
-      return res
-        .status(401)
-        .json({ message: "Please verify your email first" });
-    }
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -197,7 +198,7 @@ export const verifyUser = async (req, res) => {
     }
 
     user.verify = true;
-    user.verificationToken = null;
+    user.verificationToken = undefined;
     await user.save();
 
     res.json({ message: "Verification successful" });
